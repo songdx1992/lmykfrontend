@@ -98,7 +98,7 @@
         <el-col :span="24">
           <el-tabs v-model="activeTab">
             <el-tab-pane label="产品汇总" name="summary">
-              <results-summary v-if="summary" :key="summaryKey" :data="summary" />
+              <results-summary v-if="summary" :key="summaryKey" :data="summary" :role="currentUser?.role" />
             </el-tab-pane>
 
             <el-tab-pane label="产品明细" name="details">
