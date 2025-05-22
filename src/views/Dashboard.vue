@@ -127,7 +127,7 @@ export default {
   },
   data() {
     return {
-      loggedIn: true,   // 登录状态
+      loggedIn: false,   // 登录状态
       products: [],      // 从后端获取的产品列表
       departments: [     // 部门选项
         '抖音达播-季节品',
@@ -160,7 +160,7 @@ export default {
       this.currentUser = { username: savedUsername, role: savedRole };
     }
     // 应用创建时，拉取产品列表
-    fetch('http://localhost:8001/products')
+    fetch('http://192.168.1.2:8001/products')
       .then(r => r.json())
       .then(data => {
         this.products = data;
@@ -196,7 +196,7 @@ export default {
       // 调用后端 API 添加产品
       this.$refs.productForm.validate((valid) => {
           if (valid) {
-            fetch('http://localhost:8001/add_product', {
+            fetch('http://192.168.1.2:8001/add_product', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(this.newProduct)
@@ -250,7 +250,7 @@ export default {
       console.log("请求 JSON：", JSON.stringify(payload, null, 2));
 
       
-      fetch('http://localhost:8001/calculate', {
+      fetch('http://192.168.1.2:8001/calculate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
