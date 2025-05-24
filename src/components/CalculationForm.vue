@@ -83,7 +83,7 @@
 
       <el-col :span="4">
         <el-form-item label="坑位费不保GMV固定(元)">
-          <el-input-number v-model="item.slot_fee_amount" :min="0" :step="1" />
+          <el-input-number v-model="item.slot_fee_amount" :min="0" :step="1"  class="custom-input-number" />
         </el-form-item>
       </el-col>
 
@@ -179,5 +179,9 @@ export default {
   margin-bottom: 20px;
   border-bottom: 1px solid #eee;
   padding-bottom: 12px;
+}
+
+.custom-input-number .el-input__inner {
+  width: 250px;
 }
 </style>

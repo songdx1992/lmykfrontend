@@ -104,6 +104,10 @@
             <el-tab-pane label="产品明细" name="details">
               <results-details v-if="details" :items="details" />
             </el-tab-pane>
+
+              <el-tab-pane label="要分摊的固定费用基数" name="FixedCosts">
+                <fixed-costs :data="fixedCosts" />
+              </el-tab-pane>
           </el-tabs>
         </el-col>
       </el-row>
@@ -116,6 +120,7 @@ import LoginForm from '../components/LoginForm.vue';
 import CalculationForm from '../components/CalculationForm.vue';
 import ResultsSummary from '../components/ResultsSummary.vue';
 import ResultsDetails from '../components/ResultsDetails.vue';
+import FixedCosts from '../components/FixedCosts.vue';
 
 export default {
   name: 'Dashboard',
@@ -123,7 +128,8 @@ export default {
     LoginForm,
     CalculationForm,
     ResultsSummary,
-    ResultsDetails
+    ResultsDetails,
+    FixedCosts
   },
   data() {
     return {
@@ -133,13 +139,18 @@ export default {
         '抖音达播-季节品',
         '抖音自播-冰品',
         '天猫-季节品',
+        "天猫-冰品",
         '京东-季节品',
-        '拼多多-季节品'
+        "京东-冰品",
+        "拼多多-冰品",
+        '拼多多-季节品',
+        "小红书-季节品",
+        "小红书-冰品",
+        "有赞-季节品",
+        "有赞-冰品"
       ],
       monthOptions: [    // 月份选项
-        '202501',
-        '202502',
-        '202503'
+        '202501'
       ],
       activeTab: 'summary',  // 默认展示汇总
 
@@ -148,7 +159,8 @@ export default {
       currentUser: null,
       summary: null,
       summaryKey: 0,       // 汇总结果数据
-      details: []          // 明细结果数据
+      details: [],
+      fixedCosts: []         // 明细结果数据
     };
   },
   created() {
@@ -160,7 +172,8 @@ export default {
       this.currentUser = { username: savedUsername, role: savedRole };
     }
     // 应用创建时，拉取产品列表
-    fetch('http://192.168.1.2:8001/products')
+
+    fetch('/products')
       .then(r => r.json())
       .then(data => {
         this.products = data;
@@ -168,6 +181,18 @@ export default {
       .catch(() => {
         this.$message.error('无法加载产品列表');
       });
+
+    fetch('/fixed_costs')
+      .then(r => r.json())
+      .then(data => {
+        this.fixedCosts = data;
+        console.log('返回数据结构:', data); // ⬅️ 打印完整返回体
+      })
+      
+      .catch(() => {
+        this.$message.error('无法加载固定费用数据');
+      });
+
   },
   methods: {
     onLogin(userInfo) {
@@ -196,7 +221,7 @@ export default {
       // 调用后端 API 添加产品
       this.$refs.productForm.validate((valid) => {
           if (valid) {
-            fetch('http://192.168.1.2:8001/add_product', {
+            fetch('/add_product', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(this.newProduct)
@@ -250,7 +275,7 @@ export default {
       console.log("请求 JSON：", JSON.stringify(payload, null, 2));
 
       
-      fetch('http://192.168.1.2:8001/calculate', {
+      fetch('/calculate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
