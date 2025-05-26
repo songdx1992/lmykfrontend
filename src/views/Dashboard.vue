@@ -29,69 +29,10 @@
         </el-col>
       </el-row>
 
-  
-     
-      <!-- 弹窗 -->
-      <el-dialog title="新增产品" v-model="isProductModalVisible" width="30%">
-        <el-form :model="newProduct" ref="productForm" label-width="100px">
-          <el-form-item
-            label="产品名称"
-            prop="name"
-            :rules="[{ required: true, message: '请输入产品名称', trigger: 'blur' }]"
-          >
-            <el-input
-              v-model="newProduct.name"
-              placeholder="请输入产品名称"
-              maxlength="100"
-            />
-          </el-form-item>
-
-          <el-form-item
-            label="成本单价"
-            prop="cost_unit_price"
-            :rules="[{ required: true, message: '请输入成本单价', trigger: 'blur' },{ validator: validateTaxRate, trigger: ['blur', 'change'] }]"
-          >
-            <el-input-number
-              v-model="newProduct.cost_unit_price"
-              :min="0.00"
-              precision="2"
-              placeholder="请输入成本单价"
-            />
-          </el-form-item>
-
-          <el-form-item
-            label="运费"
-            prop="shipping_fee"
-            :rules="[{ required: true, message: '请输入运费', trigger: 'blur' }, { validator: validateTaxRate, trigger: ['blur', 'change'] }]"
-          >
-            <el-input-number
-              v-model="newProduct.shipping_fee"
-              :min="0.00"
-              precision="2"
-              placeholder="请输入运费"
-            />
-          </el-form-item>
-
-          <el-form-item
-            label="税率"
-            prop="cost_tax_rate"
-            :rules="[{ required: true, message: '请输入税率', trigger: 'blur' },{ validator: validateTaxRate, trigger: ['blur', 'change'] }]"
-          >
-            <el-input-number
-              v-model="newProduct.cost_tax_rate"
-              :min="0.000"
-              precision="2"
-              placeholder="请输入税率"
-            />
-          </el-form-item>
-        </el-form>
-
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="isProductModalVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitProduct">确定</el-button>
-        </span>
-      </el-dialog>
-
+      <add-product-dialog
+        v-model:visible="isProductModalVisible"
+        @submit="submitProduct"
+      />
 
       <!-- 下半部分：结果页签 -->
       <el-row class="mt-4">
@@ -121,6 +62,7 @@ import CalculationForm from '../components/CalculationForm.vue';
 import ResultsSummary from '../components/ResultsSummary.vue';
 import ResultsDetails from '../components/ResultsDetails.vue';
 import FixedCosts from '../components/FixedCosts.vue';
+import AddProductDialog from '../components/AddProductDialog.vue';
 
 export default {
   name: 'Dashboard',
@@ -129,7 +71,8 @@ export default {
     CalculationForm,
     ResultsSummary,
     ResultsDetails,
-    FixedCosts
+    FixedCosts,
+    AddProductDialog
   },
   data() {
     return {
@@ -155,7 +98,6 @@ export default {
       activeTab: 'summary',  // 默认展示汇总
 
       isProductModalVisible: false, // 控制弹窗显示
-      newProduct: {name: '',cost_unit_price: null,shipping_fee: null,cost_tax_rate: null},
       currentUser: null,
       summary: null,
       summaryKey: 0,       // 汇总结果数据
@@ -172,16 +114,8 @@ export default {
       this.currentUser = { username: savedUsername, role: savedRole };
     }
     // 应用创建时，拉取产品列表
-
-    fetch('/products')
-      .then(r => r.json())
-      .then(data => {
-        this.products = data;
-      })
-      .catch(() => {
-        this.$message.error('无法加载产品列表');
-      });
-
+    this.fetchProductList();
+ 
     fetch('/fixed_costs')
       .then(r => r.json())
       .then(data => {
@@ -205,6 +139,16 @@ export default {
       this.loggedIn = false;
       this.currentUser = null;
     },
+    fetchProductList() {
+      fetch('/products')
+        .then(r => r.json())
+        .then(data => {
+          this.products = data;
+        })
+        .catch(() => {
+          this.$message.error('无法加载产品列表');
+        });
+    },
     showProductModal() {this.resetForm();this.isProductModalVisible = true;},
 
     // 自定义表单验证函数
@@ -217,21 +161,21 @@ export default {
         callback()
       }
     },
-    submitProduct() {
+    submitProduct(product) {
+  
       // 调用后端 API 添加产品
-      this.$refs.productForm.validate((valid) => {
-          if (valid) {
+  
             fetch('/add_product', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(this.newProduct)
+              body: JSON.stringify(product)
             })
               .then(response => response.json())
               .then(data => {
                 if (data.success) {
                   this.$message.success('产品添加成功');
                   this.isProductModalVisible = false;
-              this.resetForm(); // 重置表单
+                  this.fetchProductList(); // 刷新产品列表
             } else {
           // 处理后端返回的具体错误信息
                 if (data.detail && data.detail.includes('产品名称已存在')) {
@@ -248,11 +192,7 @@ export default {
           .catch(() => {
             this.$message.error('请求失败');
           });
-        } else {
-      // 校验未通过
-              this.$message.error('请完整填写表单信息');
-              }       
-    });
+        
     },
       
     resetForm() {
