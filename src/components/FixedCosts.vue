@@ -3,9 +3,10 @@
     <div class="d-flex justify-between mb-2">
       <h3>要分摊的固定费用基数</h3>
       <div>
-        <el-button v-if="!isEditing" type="primary" @click="startEditing">修改</el-button>
-
-        <template v-else>
+        <el-button v-if="!isEditing&& userRole=== 'admin' "type="primary" @click="startEditing">修改</el-button>
+        
+        <template  v-else-if="isEditing && userRole === 'admin'">
+          <el-button type="primary" @click="addRow">新增费用</el-button>
           <el-button type="success" @click="saveEdits">保存</el-button>
           <el-button @click="cancelEditing">取消</el-button>
         </template>
@@ -14,8 +15,9 @@
 
     <el-table :data="editedData" stripe border style="width: 100%" v-loading="loading">
       <el-table-column prop="month" label="月份" width="100">
-        <template #default="{ row }">
-          <span>{{ row.month }}</span>
+         <template #default="{ row, $index }">
+            <el-input v-if="isEditing" v-model="editedData[$index].month" size="small" />
+            <span v-else>{{ row.month }}</span>
         </template>
       </el-table-column>
     
@@ -30,7 +32,8 @@
 </template>
 
 <script>
-import { ref, watch } from 'vue';
+import { ref, watch ,onMounted} from 'vue';
+
 
 export default {
   name: 'FixedCosts',
@@ -44,8 +47,22 @@ export default {
     const isEditing = ref(false);
     const loading = ref(false);
     const editedData = ref([]);
-  
+    const userRole = ref('basic'); // 默认是 basic
+    const addRow = () => {
+  // 添加一个空数据行（你需要的字段结构）
+      editedData.value.push({
+        month:  '', // 可留空，后续再手动填写
+        dept: '',
+        rent: 0,
+        salary: 0,
+        travel: 0,
+        other: 0,
+        marketing_share: 0,
+        customer_service_share: 0
+      });
+    };
     const editableCols = [
+     
       { prop: 'dept', label: '部门' },
       { prop: 'rent', label: '房租费用' },
       { prop: 'salary', label: '工资及福利' },
@@ -60,8 +77,24 @@ export default {
     }, { immediate: true });
 
     const startEditing = () => {
+
       isEditing.value = true;
     };
+  
+    onMounted(() => {
+      const role = localStorage.getItem('role');
+      if (role) {
+        userRole.value = role;
+      }else {
+        userRole.value = 'basic'; // 默认角色
+        localStorage.removeItem('role');
+
+      }
+        console.log('点击修改时，userRole 对象:', userRole);
+        console.log('点击修改时，userRole 的值:', userRole.value);
+        console.log('当前是否是 admin 角色:', userRole.value === 'admin'); 
+
+    });
 
     const cancelEditing = () => {
       editedData.value = JSON.parse(JSON.stringify(props.data));
@@ -101,7 +134,9 @@ export default {
       startEditing,
       cancelEditing,
       saveEdits,
-      loading
+      loading,
+      userRole,
+      addRow
     };
   }
 };
