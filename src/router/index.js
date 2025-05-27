@@ -1,11 +1,11 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import Dashboard from '../views/Dashboard.vue';
-import FixedCosts from '../src/components/FixedCosts.vue';
+import { createRouter, createWebHistory } from "vue-router";
+import Login from "../views/Login.vue";
+import Dashboard from "../views/Dashboard.vue";
 
 const routes = [
-  { path: '/', redirect: '/dashboard' },
-  { path: '/dashboard', component: Dashboard },
-  { path: '/fixed-costs', component: FixedCosts }
+  { path: "/", redirect: "/login" },
+  { path: "/login", component: Login },
+  { path: "/dashboard", component: Dashboard }
 ];
 
 const router = createRouter({

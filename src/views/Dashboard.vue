@@ -1,10 +1,10 @@
 <template>
   <div>
     <!-- 如果未登录，显示登录表单 -->
-    <login-form v-if="!loggedIn" @on-login="onLogin" />
+    <!-- <login-form v-if="!loggedIn" @on-login="onLogin" /> -->
 
     <!-- 登录后，展示卡片式多标签页 -->
-    <el-card v-else>
+    <el-card >
       <header class="header-container">
         <h2>
           欢迎，{{ currentUser.username }}
@@ -77,6 +77,7 @@ export default {
   data() {
     return {
       loggedIn: false,   // 登录状态
+      currentUser: {username: '', role: ''}, // 当前用户信息
       products: [],      // 从后端获取的产品列表
       departments: [     // 部门选项
         '抖音达播-季节品',
@@ -98,21 +99,25 @@ export default {
       activeTab: 'summary',  // 默认展示汇总
 
       isProductModalVisible: false, // 控制弹窗显示
-      currentUser: null,
+  
       summary: null,
       summaryKey: 0,       // 汇总结果数据
       details: [],
-      fixedCosts: []         // 明细结果数据
+      fixedCosts: [],         // 明细结果数据
     };
   },
   created() {
     // 检查是否已有 localStorage 登录信息
     const savedUsername = localStorage.getItem('username');
     const savedRole = localStorage.getItem('role');
-    if (savedUsername && savedRole) {
+   if (!savedUsername || !savedRole) {
+      this.$router.push('/login');}
+      else {
       this.loggedIn = true;
-      this.currentUser = { username: savedUsername, role: savedRole };
+      this.currentUser.username = savedUsername;
+      this.currentUser.role = savedRole;
     }
+
     // 应用创建时，拉取产品列表
     this.fetchProductList();
  
@@ -136,6 +141,7 @@ export default {
     logout() {
       localStorage.removeItem('username');
       localStorage.removeItem('role');
+      this.$router.push('/login');
       this.loggedIn = false;
       this.currentUser = null;
     },

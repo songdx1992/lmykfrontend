@@ -36,7 +36,7 @@ export default {
 
         // ✅ 通知父组件登录成功
         this.$emit('on-login', { username: this.username, role: account.role });
-        window.location.reload();
+       
       } else {
         this.$message.error('账号或密码错误');
       }
