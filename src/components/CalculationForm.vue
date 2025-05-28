@@ -32,73 +32,82 @@
 
     <!-- 产品输入行 -->
     <el-row
-      class="product-row"
-      :gutter="20"
-      v-for="(item, idx) in productInputs"
-      :key="item.id"
-    >
-      <el-col :span="4"><strong>{{ item.name }}</strong></el-col>
+  class="product-row"
+  :gutter="20"
+  v-for="(item, idx) in productInputs"
+  :key="item.id"
+>
+  <el-col :span="24">
+    <el-card shadow="hover" class="product-card">
+      <!-- 产品名称在顶部一行 -->
+      <div class="product-title"><strong>{{ item.name }}</strong></div>
 
-      <el-col :span="4">
-        <el-form-item label="数量">
-          <el-input-number v-model="item.quantity" :min="1" />
-        </el-form-item>
-      </el-col>
+      <!-- 输入项不强制对齐，换行展开 -->
+      <el-row :gutter="20">
+        <el-col :span="5">
+          <el-form-item label="数量">
+            <el-input-number v-model="item.quantity" :min="1" />
+          </el-form-item>
+        </el-col>
 
-      <el-col :span="4">
-        <el-form-item label="含税单价">
-          <el-input-number v-model="item.unit_price" :min="0" :step="0.01" />
-        </el-form-item>
-      </el-col>
+        <el-col :span="5">
+          <el-form-item label="含税单价">
+            <el-input-number v-model="item.unit_price" :min="0" :step="0.01" />
+          </el-form-item>
+        </el-col>
 
-      <el-col :span="4">
-        <el-form-item label="退款率(小数)">
-          <el-input-number v-model="item.refund_rate" :min="0" :max="1" :step="0.01" />
-        </el-form-item>
-      </el-col>
+        <el-col :span="5">
+          <el-form-item label="退款率(小数)">
+            <el-input-number v-model="item.refund_rate" :min="0" :max="1" :step="0.01" />
+          </el-form-item>
+        </el-col>
 
-      <el-col :span="4">
-        <el-form-item label="寄样费费率(小数)">
-          <el-input-number v-model="item.sample_fee_rate" :min="0" :max="1" :step="0.001" />
-        </el-form-item>
-      </el-col>
+        <el-col :span="5">
+          <el-form-item label="寄样费费率(小数)">
+            <el-input-number v-model="item.sample_fee_rate" :min="0" :max="1" :step="0.001" />
+          </el-form-item>
+        </el-col>
 
-      <el-col :span="4">
-        <el-form-item label="达人佣金率(小数)">
-          <el-input-number v-model="item.influencer_rate" :min="0" :max="1" :step="0.01" />
-        </el-form-item>
-      </el-col>
+        <el-col :span="5">
+          <el-form-item label="达人佣金率(小数)">
+            <el-input-number v-model="item.influencer_rate" :min="0" :max="1" :step="0.01" />
+          </el-form-item>
+        </el-col>
 
-      <el-col :span="4">
-        <el-form-item label="坑位费率保GMV(小数)">
-          <el-input-number v-model="item.slot_fee_rate" :min="0" :max="1" :step="0.01" />
-        </el-form-item>
-      </el-col>
+        <el-col :span="5">
+          <el-form-item label="坑位费率保GMV(小数)">
+            <el-input-number v-model="item.slot_fee_rate" :min="0" :max="1" :step="0.01" />
+          </el-form-item>
+        </el-col>
 
-      <el-col :span="4">
-        <el-form-item label="广告支出(元)">
-          <el-input-number v-model="item.ad_spend_amount" :min="0" :step="1" />
-        </el-form-item>
-      </el-col>
+        <el-col :span="5">
+          <el-form-item label="广告支出(元)">
+            <el-input-number v-model="item.ad_spend_amount" :min="0" :step="1" />
+          </el-form-item>
+        </el-col>
 
-      <el-col :span="4">
-        <el-form-item label="坑位费不保GMV固定(元)">
-          <el-input-number v-model="item.slot_fee_amount" :min="0" :step="1"  class="custom-input-number" />
-        </el-form-item>
-      </el-col>
+        <el-col :span="5">
+          <el-form-item label="坑位费不保GMV固定(元)">
+            <el-input-number v-model="item.slot_fee_amount" :min="0" :step="1" />
+          </el-form-item>
+        </el-col>
 
-      <el-col :span="4">
-        <el-form-item label="达人佣金税率(小数)">
-          <el-input-number v-model="item.influencer_tax_rate" :min="0" :max="1" :step="0.01" />
-        </el-form-item>
-      </el-col>
+        <el-col :span="5">
+          <el-form-item label="达人佣金税率(小数)">
+            <el-input-number v-model="item.influencer_tax_rate" :min="0" :max="1" :step="0.01" />
+          </el-form-item>
+        </el-col>
 
-      <el-col :span="4">
-        <el-form-item label="坑位税率(小数)">
-          <el-input-number v-model="item.slot_fee_tax_rate" :min="0" :max="1" :step="0.01" />
-        </el-form-item>
-      </el-col>
-    </el-row>
+        <el-col :span="4">
+          <el-form-item label="坑位税率(小数)">
+            <el-input-number v-model="item.slot_fee_tax_rate" :min="0" :max="1" :step="0.01" />
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </el-card>
+  </el-col>
+</el-row>
+
 
     <!-- 提交按钮 -->
     <el-button
@@ -184,4 +193,15 @@ export default {
 .custom-input-number .el-input__inner {
   width: 250px;
 }
+.product-card {
+  margin-bottom: 20px;
+  padding: 10px;
+}
+
+.product-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
 </style>

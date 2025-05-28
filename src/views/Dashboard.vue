@@ -12,8 +12,6 @@
         </h2>
       </header>
 
-   
-
     <el-row class="mt-2"></el-row>  <!-- 用 margin class 替代换行 -->
 
       <!-- 上半部分：输入参数 -->
@@ -45,10 +43,6 @@
             <el-tab-pane label="产品明细" name="details">
               <results-details v-if="details" :items="details" />
             </el-tab-pane>
-
-              <el-tab-pane label="要分摊的固定费用基数" name="FixedCosts">
-                <fixed-costs :data="fixedCosts" />
-              </el-tab-pane>
           </el-tabs>
         </el-col>
       </el-row>
@@ -61,7 +55,6 @@ import LoginForm from '../components/LoginForm.vue';
 import CalculationForm from '../components/CalculationForm.vue';
 import ResultsSummary from '../components/ResultsSummary.vue';
 import ResultsDetails from '../components/ResultsDetails.vue';
-import FixedCosts from '../components/FixedCosts.vue';
 import AddProductDialog from '../components/AddProductDialog.vue';
 
 export default {
@@ -71,7 +64,6 @@ export default {
     CalculationForm,
     ResultsSummary,
     ResultsDetails,
-    FixedCosts,
     AddProductDialog
   },
   data() {
@@ -102,8 +94,7 @@ export default {
   
       summary: null,
       summaryKey: 0,       // 汇总结果数据
-      details: [],
-      fixedCosts: [],         // 明细结果数据
+      details: []// 明细结果数据
     };
   },
   created() {
