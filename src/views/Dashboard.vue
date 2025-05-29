@@ -1,19 +1,6 @@
 <template>
   <div>
-    <!-- 如果未登录，显示登录表单 -->
-    <!-- <login-form v-if="!loggedIn" @on-login="onLogin" /> -->
-
-    <!-- 登录后，展示卡片式多标签页 -->
     <el-card >
-      <header class="header-container">
-        <h2>
-          欢迎，{{ currentUser.username }}
-          <el-button @click="logout">退出登录</el-button>
-        </h2>
-      </header>
-
-    <el-row class="mt-2"></el-row>  <!-- 用 margin class 替代换行 -->
-
       <!-- 上半部分：输入参数 -->
       <el-row>
         <el-col :span="24">
@@ -98,16 +85,16 @@ export default {
     };
   },
   created() {
-    // 检查是否已有 localStorage 登录信息
-    const savedUsername = localStorage.getItem('username');
-    const savedRole = localStorage.getItem('role');
-   if (!savedUsername || !savedRole) {
-      this.$router.push('/login');}
-      else {
-      this.loggedIn = true;
-      this.currentUser.username = savedUsername;
-      this.currentUser.role = savedRole;
-    }
+  //   // 检查是否已有 localStorage 登录信息
+  //   const savedUsername = localStorage.getItem('username');
+  //   const savedRole = localStorage.getItem('role');
+  //  if (!savedUsername || !savedRole) {
+  //     this.$router.push('/login');}
+  //     else {
+  //     this.loggedIn = true;
+  //     this.currentUser.username = savedUsername;
+  //     this.currentUser.role = savedRole;
+  //   }
 
     // 应用创建时，拉取产品列表
     this.fetchProductList();
@@ -125,17 +112,17 @@ export default {
 
   },
   methods: {
-    onLogin(userInfo) {
-      this.loggedIn = true;
-      this.currentUser = userInfo;
-    },
-    logout() {
-      localStorage.removeItem('username');
-      localStorage.removeItem('role');
-      this.$router.push('/login');
-      this.loggedIn = false;
-      this.currentUser = null;
-    },
+    // onLogin(userInfo) {
+    //   this.loggedIn = true;
+    //   this.currentUser = userInfo;
+    // },
+    // logout() {
+    //   localStorage.removeItem('username');
+    //   localStorage.removeItem('role');
+    //   this.$router.push('/login');
+    //   this.loggedIn = false;
+    //   this.currentUser = null;
+    // },
     fetchProductList() {
       fetch('/products')
         .then(r => r.json())

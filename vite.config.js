@@ -10,22 +10,32 @@ export default defineConfig({
       '/products': {
         target: 'http://192.168.1.2:8009',
         changeOrigin: true
+        
       },
       '/fixed_costs': {
         target: 'http://192.168.1.2:8009',
         changeOrigin: true
+       
       },
       '/calculate': {
         target: 'http://192.168.1.2:8009',
         changeOrigin: true
+        
       },
       '/save_fixed_costs': {
         target: 'http://192.168.1.2:8009',
         changeOrigin: true
+        
       },
       '/add_product': {
         target: 'http://192.168.1.2:8009',
         changeOrigin: true
+
+      },
+      '/all_products': {
+        target: 'http://192.168.1.2:8009',
+        changeOrigin: true
+       
       }
     }
 }
