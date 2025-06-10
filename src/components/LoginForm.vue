@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   name: 'LoginForm',
   data() {
@@ -29,22 +30,21 @@ export default {
     };
   },
   methods: {
-    handleLogin() {
-      const accounts = {
-        "admin": { password: "lmyk9999", role: "admin" },
-        "lmyk": { password: "lmyk9999", role: "basic" }
-      };
-
-      const account = accounts[this.username];
-      if (account && account.password === this.password) {
+    async handleLogin() {
+      try {
+        const res = await axios.post('http://localhost:8009/login', {
+        username: this.username,
+        password: this.password
+      });
+        // ✅ 登录成功，获取返回的用户名和角色
+        const { username, role } = res.data;
         // ✅ 登录成功，保存登录信息到 localStorage
-        localStorage.setItem('username', this.username);
-        localStorage.setItem('role', account.role);
+        localStorage.setItem('username', username);
+        localStorage.setItem('role', role);
 
         // ✅ 通知父组件登录成功
-        this.$emit('on-login', { username: this.username, role: account.role });
-       
-      } else {
+        this.$emit('on-login', { username: username, role: role });
+      } catch (err) {
         this.$message.error('账号或密码错误');
       }
     }
