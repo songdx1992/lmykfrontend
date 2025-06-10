@@ -85,30 +85,30 @@ export default {
     };
   },
   created() {
-  //   // 检查是否已有 localStorage 登录信息
-  //   const savedUsername = localStorage.getItem('username');
-  //   const savedRole = localStorage.getItem('role');
-  //  if (!savedUsername || !savedRole) {
-  //     this.$router.push('/login');}
-  //     else {
-  //     this.loggedIn = true;
-  //     this.currentUser.username = savedUsername;
-  //     this.currentUser.role = savedRole;
-  //   }
+    // 检查是否已有 localStorage 登录信息
+    const savedUsername = localStorage.getItem('username');
+    const savedRole = localStorage.getItem('role');
+   if (!savedUsername || !savedRole) {
+      this.$router.push('/login');}
+      else {
+      this.loggedIn = true;
+      this.currentUser.username = savedUsername;
+      this.currentUser.role = savedRole;
+    }
 
     // 应用创建时，拉取产品列表
     this.fetchProductList();
  
-    fetch('/fixed_costs')
-      .then(r => r.json())
-      .then(data => {
-        this.fixedCosts = data;
-        console.log('返回数据结构:', data); // ⬅️ 打印完整返回体
-      })
+    // fetch('/fixed_costs')
+    //   .then(r => r.json())
+    //   .then(data => {
+    //     this.fixedCosts = data;
+    //     console.log('返回数据结构:', data); // ⬅️ 打印完整返回体
+    //   })
       
-      .catch(() => {
-        this.$message.error('无法加载固定费用数据');
-      });
+    //   .catch(() => {
+    //     this.$message.error('无法加载固定费用数据');
+    //   });
 
   },
   methods: {
