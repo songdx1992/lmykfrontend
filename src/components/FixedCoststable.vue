@@ -33,7 +33,7 @@
 
 <script>
 import { ref, watch ,onMounted} from 'vue';
-
+import api from '/src/utils/api'; 
 
 export default {
   name: 'FixedCosts',
@@ -103,20 +103,13 @@ export default {
     
     const saveEdits = () => {
       loading.value = true;
-      fetch('/save_fixed_costs', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(editedData.value)
-      })
-        .then(res => res.json())
-        .then(data => {
-          if (data.success) {
+      api.post('/save_fixed_costs', editedData.value)
+        .then(res => {
+          if (res.data.success) {
             isEditing.value = false;
             console.log('保存成功');
           } else {
-            console.error('保存失败:', data.message);
+            console.error('保存失败:', res.data.message);
           }
         })
         .catch(err => {

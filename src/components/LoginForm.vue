@@ -21,6 +21,9 @@
 
 <script>
 import axios from 'axios';
+import {useUserStore} from '/src/stores/user'
+
+
 export default {
   name: 'LoginForm',
   data() {
@@ -29,16 +32,27 @@ export default {
       password: ''
     };
   },
+  
   methods: {
     async handleLogin() {
+      const userStore = useUserStore();
       try {
         const res = await axios.post('http://localhost:8009/login', {
         username: this.username,
         password: this.password
       });
         // ✅ 登录成功，获取返回的用户名和角色
-        const { username, role } = res.data;
+        console.log('登录返回数据', res.data);
+        const { username, role, token } = res.data;
+
+        // ✅ 保存到 Pinia 中
+        userStore.setToken(token);
+        userStore.setUser(username, role);
+        console.log('保存到 Pinia 中的用户信息:', userStore.username);
+        console.log('保存到 Pinia 中的角色:', userStore.role);
+
         // ✅ 登录成功，保存登录信息到 localStorage
+        localStorage.setItem('token', token);
         localStorage.setItem('username', username);
         localStorage.setItem('role', role);
 

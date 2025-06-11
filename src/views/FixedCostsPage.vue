@@ -9,6 +9,7 @@
 <script>
 
 import FixedCosts from '../components/FixedCoststable.vue';
+import api from '/src/utils/api';
 
 export default {
   name: 'FixedCostsPage',
@@ -22,15 +23,20 @@ export default {
   created() {
       if (this.isFetched) return;
       this.isFetched = true;
-    fetch('/fixed_costs')
-      .then(r => r.json())
-      .then(data => {
-        this.fixedCosts = data;
-        console.log("固定费用返回的数据", data)
-      })
-      .catch(err => {
+      this.fetchFixedCosts()},
+  methods: {
+    async fetchFixedCosts() {
+      try{
+      const res = await api.get('/fixed_costs');
+      this.fixedCosts = res.data;
+      console.log("固定费用返回的数据", data)
+      }catch(err) {
       console.error('固定费用请求失败:', err);
-    });
-  }
+     };
+   }
+ }
 };
 </script>
+
+
+

@@ -1,42 +1,17 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import path from 'path'
 
 export default defineConfig({
   plugins: [vue()],
+  // resolve: {
+  //   alias: {
+  //     '@': path.resolve(__dirname, './src') // 配置 @ 为 src 路径
+  //   }
+  // },
   server: {
     host: '0.0.0.0',
-    port: 3000,
-    proxy: {
-      '/products': {
-        target: 'http://192.168.1.53:8009',
-        changeOrigin: true
-        
-      },
-      '/fixed_costs': {
-        target: 'http://192.168.1.53:8009',
-        changeOrigin: true
-       
-      },
-      '/calculate': {
-        target: 'http://192.168.1.53:8009',
-        changeOrigin: true
-        
-      },
-      '/save_fixed_costs': {
-        target: 'http://192.168.1.53:8009',
-        changeOrigin: true
-        
-      },
-      '/add_product': {
-        target: 'http://192.168.1.53:8009',
-        changeOrigin: true
-
-      },
-      '/all_products': {
-        target: 'http://192.168.1.53:8009',
-        changeOrigin: true
-       
-      }
-    }
+    port: 3000
+    
 }
 })

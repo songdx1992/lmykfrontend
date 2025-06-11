@@ -8,23 +8,21 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '/src/stores/user'
 
 const router = useRouter()
+
+const userStore = useUserStore()
+
 const username = ref('')
 
 onMounted(() => {
-  try {
-    const userStr = localStorage.getItem("currentUser")
-    const user = userStr ? JSON.parse(userStr) : null
-    username.value = localStorage.getItem("username") || ''
-  } catch (err) {
-    console.error("解析用户信息失败:", err)
-    username.value = ''
-  }
+  userStore.restoreFromLocalStorage()
+  username.value = userStore.username || ''
 })
 
 function logout() {
-  localStorage.removeItem("currentUser")
+  userStore.logout()
   router.push("/login")
 }
 </script>

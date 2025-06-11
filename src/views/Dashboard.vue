@@ -43,6 +43,8 @@ import CalculationForm from '../components/CalculationForm.vue';
 import ResultsSummary from '../components/ResultsSummary.vue';
 import ResultsDetails from '../components/ResultsDetails.vue';
 import AddProductDialog from '../components/AddProductDialog.vue';
+import api from '/src/utils/api';
+import { useUserStore } from '/src/stores/user';
 
 export default {
   name: 'Dashboard',
@@ -85,15 +87,22 @@ export default {
     };
   },
   created() {
+
+    const userStore = useUserStore();
+    userStore.restoreFromLocalStorage();
+
+
+
     // 检查是否已有 localStorage 登录信息
-    const savedUsername = localStorage.getItem('username');
-    const savedRole = localStorage.getItem('role');
-   if (!savedUsername || !savedRole) {
-      this.$router.push('/login');}
-      else {
+    // const savedUsername = localStorage.getItem('username');
+    // const savedRole = localStorage.getItem('role');
+
+   if (!userStore.username || !userStore.role) {
+      this.$router.push('/login');
+    } else {
       this.loggedIn = true;
-      this.currentUser.username = savedUsername;
-      this.currentUser.role = savedRole;
+      this.currentUser.username = userStore.username;
+      this.currentUser.role = userStore.role;
     }
 
     // 应用创建时，拉取产品列表
@@ -123,15 +132,15 @@ export default {
     //   this.loggedIn = false;
     //   this.currentUser = null;
     // },
-    fetchProductList() {
-      fetch('/products')
-        .then(r => r.json())
-        .then(data => {
-          this.products = data;
-        })
-        .catch(() => {
-          this.$message.error('无法加载产品列表');
-        });
+    async fetchProductList() {
+      try {
+        const res = await api.get('/products');
+        this.products = res.data;
+        console.log("产品列表返回的数据", this.products);
+      } catch (err) {
+        console.error('产品列表请求失败:', err);
+        this.$message.error('无法加载产品列表');
+      }
     },
     showProductModal() {this.resetForm();this.isProductModalVisible = true;},
 
@@ -145,40 +154,31 @@ export default {
         callback()
       }
     },
-    submitProduct(product) {
+    async submitProduct(product) {
   
       // 调用后端 API 添加产品
-  
-            fetch('/add_product', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(product)
-            })
-              .then(response => response.json())
-              .then(data => {
-                if (data.success) {
-                  this.$message.success('产品添加成功');
-                  this.isProductModalVisible = false;
-                  this.fetchProductList(); // 刷新产品列表
-            } else {
-          // 处理后端返回的具体错误信息
-                if (data.detail && data.detail.includes('产品名称已存在')) {
-                  this.$message.error('产品添加失败：产品名称已存在');
-                } else {
-                  this.$message.error(data.message || '添加失败');
-                }
-                
-                // 保留模态框打开，让用户可以修改错误
-                // this.isProductModalVisible = false;
-                // this.resetForm(); // 不重置表单，让用户可以修改错误
-              }
-          })
-          .catch(() => {
-            this.$message.error('请求失败');
-          });
-        
+      try {
+        const res = await api.post('/add_product', product);
+        if (res.data.success) {
+          this.$message.success('产品添加成功');
+          this.isProductModalVisible = false;
+          this.fetchProductList(); // 刷新产品列表
+        }
+    } catch (error)  {
+    // ✅ 从 error.response.data 里取后端返回的错误信息
+        const errorMsg = error.response?.data?.detail || error.response?.data?.message || '添加失败';
+
+        if (errorMsg.includes('产品名称已存在')) {
+          this.$message.error('产品添加失败：产品名称已存在');
+        } else {
+          this.$message.error(errorMsg);
+        }
+
+        console.error('添加产品失败:', errorMsg);
+      }
     },
-      
+
+
     resetForm() {
     // 重置表单数据
       this.newProduct = {
@@ -190,7 +190,7 @@ export default {
   },
 
     // 处理“计算”事件
-    calculate({ form, products }) {
+    async calculate({ form, products }) {
 
       // ✅ 先定义 payload 对象
       const payload = {department: form.department,month: form.month,products};
@@ -198,34 +198,30 @@ export default {
       // ✅ 打印 payload，调试用
       console.log("请求 JSON：", JSON.stringify(payload, null, 2));
 
-      
-      fetch('/calculate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          department: form.department,
-          month: form.month,
-          products
-        })
-      })
-      .then(async res => {
-        if (!res.ok) {const err = await res.json();this.$message.error(err.detail || '计算失败');throw new Error(err.detail);}return res.json();
-      })
-      .then(data => {
-        // 读取后端返回的 summary 和 details
+      try {
+        const res = await api.post('/calculate', payload);
+        
+        // 假设后端成功直接返回 { summary, details }
+        const data = res.data;
         this.summary = data.summary;
-         this.summaryKey += 1;
+        this.summaryKey += 1; // 更新 key 以强制重新渲染
         this.details = data.details;
-        // 切到汇总页签
-        this.activeTab = 'summary';
-      })
-      .catch(() => {
-        // 错误已提示，无需额外处理
-      });
+        // 切换到汇总页签
+        this.activeTab = 'summary'; 
+      } catch (error) {
+        // ✅ 错误处理：从 error.response.data 里取后端返回的错误信息
+        const errorMsg = error.response?.data?.detail || error.response?.data?.message || '计算失败';
+        this.$message.error(errorMsg);
+        console.error('计算失败:', errorMsg);
+        // ✅ 这里可以选择抛出错误或其他处理
+        throw error;
+      }
     }
   }
 };
 </script>
+
+
 
 <style scoped>
 /* 根据需要添加局部样式 */
@@ -238,3 +234,4 @@ export default {
   margin-top: 16px;
 }
 </style>
+

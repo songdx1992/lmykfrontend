@@ -35,6 +35,7 @@
 <script>
 import ProductTable from '../components/Productstable.vue';
 import AddProductDialog from '../components/AddProductDialog.vue';
+import api from '/src/utils/api';
 
 export default {
   name: 'ProductsView',
@@ -53,52 +54,36 @@ export default {
     this.fetchProductList();
   },
   methods: {
-    fetchProductList() {
+    async fetchProductList() {
     // 构造查询参数
       const params = this.searchKeyword
         ? `?name=${encodeURIComponent(this.searchKeyword)}`
         : '';
-      fetch(`/all_products${params}`)
-        .then(r => r.json())
-        .then(data => {
-          this.products = data;
-              console.log("类型", typeof data);
-              console.log("返回的数据", data);
-            if (data.length) {
-                console.log("第一个产品详情", data[0]);
-            }
-        })
-        .catch(() => {
-          this.$message.error('无法加载产品列表');
-        });
+      try {
+        const res = await api.get(`/all_products${params}`);
+        this.products = res.data;
+        console.log("类型", typeof res.data);
+        console.log("返回的数据", res.data);
+      } catch (error) {
+        console.error('获取产品列表失败:', error);
+      }
     },
-    submitProduct(product) {
-      fetch('/add_product', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(product)
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            this.$message.success('产品添加成功');
-            this.isProductModalVisible = false;
-            this.fetchProductList(); // 刷新产品列表
-          } else {
-            if (data.detail && data.detail.includes('产品名称已存在')) {
-              this.$message.error('产品添加失败：产品名称已存在');
-            } else {
-              this.$message.error(data.message || '添加失败');
-            }
-          }
-        })
-        .catch(() => {
-          this.$message.error('请求失败');
-        });
+    async submitProduct(product) {
+      try {
+        const res = await api.post('/add_product', product);
+        if (res.data.success) {
+          this.$message.success('产品添加成功');
+          this.isProductModalVisible = false;
+        }
+      } catch (error) {
+        console.error('添加产品失败:', error);
+      }
+      this.fetchProductList(); // 刷新产品列表
     }
   }
 };
 </script>
+     
 
 <style scoped>
 .header-container {
