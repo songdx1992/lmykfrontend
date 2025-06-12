@@ -22,7 +22,7 @@
 <script>
 import axios from 'axios';
 import {useUserStore} from '/src/stores/user'
-
+import api  from '/src/utils/api';  
 
 export default {
   name: 'LoginForm',
@@ -37,10 +37,10 @@ export default {
     async handleLogin() {
       const userStore = useUserStore();
       try {
-        const res = await axios.post('http://localhost:8009/login', {
-        username: this.username,
-        password: this.password
-      });
+        const res = await api.post('/login', {
+          username: this.username,
+          password: this.password
+        });
         // ✅ 登录成功，获取返回的用户名和角色
         console.log('登录返回数据', res.data);
         const { username, role, token } = res.data;
