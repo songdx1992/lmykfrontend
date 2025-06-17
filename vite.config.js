@@ -1,17 +1,17 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import path from 'path'
 
 export default defineConfig({
   plugins: [vue()],
-  // resolve: {
-  //   alias: {
-  //     '@': path.resolve(__dirname, './src') // 配置 @ 为 src 路径
-  //   }
-  // },
   server: {
-    host: '0.0.0.0',
-    port: 3000
-    
-}
+    host: '0.0.0.0', // 添加这一行
+    port: 3000,       // 可选：显式声明端口
+    proxy: {
+      '/api': {
+        target: 'http://192.168.1.2:8009',
+        changeOrigin: true,
+        // rewrite: (path) => path.replace(/^\/api/, ''),
+      }
+    }
+  }
 })

@@ -21,8 +21,8 @@
 
 <script>
 import axios from 'axios';
-import {useUserStore} from '/src/stores/user'
-import api  from '/src/utils/api';  
+import { useUserStore } from '/src/stores/user';
+import api  from '/src/utils/api';
 
 export default {
   name: 'LoginForm',
@@ -50,6 +50,7 @@ export default {
         userStore.setUser(username, role);
         console.log('保存到 Pinia 中的用户信息:', userStore.username);
         console.log('保存到 Pinia 中的角色:', userStore.role);
+        console.log('保存到 Pinia 中的token:', userStore.token);
 
         // ✅ 登录成功，保存登录信息到 localStorage
         localStorage.setItem('token', token);
@@ -57,7 +58,7 @@ export default {
         localStorage.setItem('role', role);
 
         // ✅ 通知父组件登录成功
-        this.$emit('on-login', { username: username, role: role });
+        this.$emit('on-login', { username: username, role: role ,token: token });
       } catch (err) {
         this.$message.error('账号或密码错误');
       }

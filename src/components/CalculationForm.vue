@@ -122,6 +122,7 @@
 </template>
 
 <script>
+
 export default {
   name: 'CalculationForm',
   props: {
@@ -157,7 +158,7 @@ export default {
           ad_spend_amount: 0,
           slot_fee_amount: 0,
           influencer_tax_rate: 0,
-          slot_fee_tax_rate: 0
+          slot_fee_tax_rate: 0.06
         };
       });
     }
