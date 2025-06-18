@@ -103,20 +103,21 @@ const metrics = [
   { key: 'ad_spend', label: '投流费用' , group: GROUPS.EXPENSE},
   { key: 'kol_fee', label: 'KOL费用分摊' , group: GROUPS.EXPENSE},
   { key: 'slot_fee', label: '达人坑位费' , group: GROUPS.EXPENSE},
-  { key: 'salary', label: '工资及福利' , group: GROUPS.EXPENSE},
-  { key: 'travel', label: '差旅费' , group: GROUPS.EXPENSE},
-  { key: 'rent', label: '租金等其他费用',group: GROUPS.EXPENSE },
-  { key: 'customer_service', label: '客服部分摊' ,group: GROUPS.EXPENSE},
-  { key: 'marketing', label: '市场部分摊' ,group: GROUPS.EXPENSE},
+  // { key: 'salary', label: '工资及福利' , group: GROUPS.EXPENSE},
+  // { key: 'travel', label: '差旅费' , group: GROUPS.EXPENSE},
+  // { key: 'rent', label: '租金等其他费用',group: GROUPS.EXPENSE },
+  // { key: 'customer_service', label: '客服部分摊' ,group: GROUPS.EXPENSE},
+  // { key: 'marketing', label: '市场部分摊' ,group: GROUPS.EXPENSE},
   
   // 利润模块
   { key: 'roi', label: 'ROI' , group: GROUPS.PROFIT},
-  { key: 'sales_profit', label: '销售利润(扣除固定成本)', group: GROUPS.PROFIT },
+  // { key: 'sales_profit', label: '销售利润(扣除固定成本)', group: GROUPS.PROFIT },
   { key: 'marketing_profit', label: '营销利润(不扣除固定成本)', group: GROUPS.PROFIT },
   { key: 'marketing_margin', label: '营销利润率', group: GROUPS.PROFIT },
   { key: 'break_even_revenue', label: '保本销售额', group: GROUPS.PROFIT },
   { key: 'break_even_quantity', label: '保本销售数量', group: GROUPS.PROFIT }
 ];
+//  2025-06-18 注释 工资福利 ，差旅费，租金等其他费用，客服部分摊，市场部分摊，销售利润扣除固定成本
 
 // 为单个产品生成行数据
 const getGroupData  = (item, group) => {

@@ -14,8 +14,9 @@
       <el-container>
         <el-aside width="200px" class="sidebar">
           <el-menu :default-active="activePath" router>
-            <el-menu-item index="/dashboard">📊 计算测算</el-menu-item>
-            <el-menu-item index="/fixed-costs">💰 固定费用</el-menu-item>
+            <el-menu-item index="/dashboard">📊 达播测算</el-menu-item>
+            <!-- <el-menu-item index="/fixed-costs">💰 固定费用</el-menu-item> -->
+               <el-menu-item index="/store-profit">🏬 店铺测算</el-menu-item>
             <el-menu-item index="/addproducts">📦 产品管理</el-menu-item>
           </el-menu>
         </el-aside>

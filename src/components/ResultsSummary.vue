@@ -15,12 +15,12 @@
         </el-table-column>
         <el-table-column label="运营数值" >
           <template #default="{ row }">
-            {{ formatValue(props.data.business[row.key]) }}
+           {{ formatValue(props.data.business[row.key], row.label) }}
           </template>
         </el-table-column>
         <el-table-column label="财务数值" >
           <template #default="{ row }">
-            {{ formatValue(props.data.financial[row.key]) }}
+            {{ formatValue(props.data.financial[row.key], row.label) }}
           </template>
         </el-table-column>
       </el-table>
@@ -31,6 +31,7 @@
 <script setup>
 // 导入 Vue 组合式 API
 import { computed, onMounted } from 'vue';
+
 
 // 定义组件 Props：role（字符串）和 data（包含 business 和 financial 两个对象）
 const props = defineProps({
@@ -77,27 +78,35 @@ const metrics = [
   { key: 'ad_spend', label: '投流费用', group: GROUPS.EXPENSE },
   { key: 'kol_fee', label: 'KOL费用分摊', group: GROUPS.EXPENSE },
   { key: 'slot_fee', label: '达人坑位费', group: GROUPS.EXPENSE },
-  { key: 'salary', label: '工资及福利', group: GROUPS.EXPENSE },
-  { key: 'travel', label: '差旅费', group: GROUPS.EXPENSE },
-  { key: 'rent', label: '租金等其他费用', group: GROUPS.EXPENSE },
-  { key: 'customer_service', label: '客服部分摊', group: GROUPS.EXPENSE },
-  { key: 'marketing', label: '市场部分摊', group: GROUPS.EXPENSE },
+  // { key: 'salary', label: '工资及福利', group: GROUPS.EXPENSE },
+  // { key: 'travel', label: '差旅费', group: GROUPS.EXPENSE },
+  // { key: 'rent', label: '租金等其他费用', group: GROUPS.EXPENSE },
+  // { key: 'customer_service', label: '客服部分摊', group: GROUPS.EXPENSE },
+  // { key: 'marketing', label: '市场部分摊', group: GROUPS.EXPENSE },
 
   // 利润模块（PROFIT）
   { key: 'roi', label: 'ROI（投入产出比）', group: GROUPS.PROFIT },
-  { key: 'sales_profit', label: '销售利润（扣除固定成本）', group: GROUPS.PROFIT },
+  // { key: 'sales_profit', label: '销售利润（扣除固定成本）', group: GROUPS.PROFIT },
   { key: 'marketing_profit', label: '营销利润（不扣除固定成本）', group: GROUPS.PROFIT },
   { key: 'marketing_margin', label: '营销利润率', group: GROUPS.PROFIT },
   { key: 'break_even_revenue', label: '保本销售额', group: GROUPS.PROFIT },
   { key: 'break_even_quantity', label: '保本销售数量', group: GROUPS.PROFIT }
 ];
+
+//  2025-06-18 注释 工资福利 ，差旅费，租金等其他费用，客服部分摊，市场部分摊，销售利润扣除固定成本
 // 格式化值：如果缺失则返回 "-"
-function formatValue(value) {
+function formatValue(value, label) {
   if (value === undefined || value === null || value === '') {
     return '-';
   }
-  return value;
+  const number = Number(value);
+  if (isNaN(number)) return '-';
+  if (label.includes('率')) {
+    return (number * 100).toFixed(2) + '%'; // 按百分比格式显示
+  }
+  return number.toFixed(2); // 保留两位小数
 }
+
 
 // 计算属性：按组分类 metrics，并根据角色过滤 expense
 const groupedMetrics = computed(() => {

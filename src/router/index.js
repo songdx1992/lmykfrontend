@@ -4,7 +4,7 @@ import Login from "../views/Login.vue";
 import Dashboard from "../views/Dashboard.vue";
 import FixedCostsPage from '../views/FixedCostsPage.vue';
 import ProductsView  from '../views/Products.vue';
-
+import StoreProfitPage  from '../views/StoreProPage.vue';
 
 const routes = [
     // 默认跳转到登录页
@@ -14,7 +14,8 @@ const routes = [
     component: Layout,
     children: [
       { path: "dashboard", component: Dashboard },
-      { path: "fixed-costs", component: FixedCostsPage },
+      { path: "store-profit", component: StoreProfitPage },
+      // { path: "fixed-costs", component: FixedCostsPage },
       { path: "addproducts", component: ProductsView }
     ]
   },
