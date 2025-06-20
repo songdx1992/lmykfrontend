@@ -1,8 +1,14 @@
-FROM nginx:stable-alpine
+# 使用官方 nginx 镜像
+FROM nginx:latest
 
-COPY dist/ /usr/share/nginx/html/
+# 删除默认静态资源
+RUN rm -rf /usr/share/nginx/html/*
 
-COPY nginx.conf /etc/nginx/nginx.conf
+# 复制前端构建产物到 nginx 目录
+COPY dist /usr/share/nginx/html
+
+# 复制自定义 nginx 配置（如果有）
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 

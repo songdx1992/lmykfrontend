@@ -8,6 +8,7 @@
             :products="products"
             :departments="departments"
             :monthOptions="monthOptions"
+            mode="dashboard"  
             @on-add-product="showProductModal"
             @on-calculate="calculate"
           />

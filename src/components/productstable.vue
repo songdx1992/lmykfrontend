@@ -2,7 +2,35 @@
   <div class="table-actions">
     <el-button type="primary" @click="$emit('add')">新增产品</el-button>
     <el-button type="success" @click="exportToExcel">导出 Excel</el-button>
+    <el-button type="warning" @click="triggerFileInput">导入产品</el-button>
+     <!-- 导入说明 Popover -->
+    <el-popover
+      placement="bottom-start"
+      width="280"
+      trigger="click"
+    >
+      <template #reference>
+        <el-button text type="primary" style="padding-left: 4px;">导入说明</el-button>
+      </template>
+      <div style="font-size: 14px; line-height: 1.6;">
+        <strong>导入要求：</strong><br />
+        表格必须包含以下列：<br />
+        <ul>
+          <li>名称</li>
+          <li>成本单价</li>
+          <li>运费</li>
+          <li>税率</li>
+        </ul>
+        除“名称”外，其余列必须为数字格式，否则导入将失败。
+      </div>
+    </el-popover>
   </div>
+ 
+  <product-import
+  ref="importer"
+  :existing-names="products.map(p => p.name)"
+  @import="handleImport"
+  />
   <el-table :data="products" stripe border style="width: 100%">
     <el-table-column prop="id" label="ID" width="60" />
     <el-table-column prop="name" label="名称" />
@@ -22,15 +50,23 @@
 <script>
 import * as XLSX from 'xlsx'
 import { saveAs } from 'file-saver'
+import ProductImport from './ProductImport.vue'
+
+
+    
 export default {
   name: 'ProductTable',
+  components  : {
+    ProductImport
+  },  
   props: {
     products: {
       type: Array,
       required: true
     }
   },
-  emits: ['delete', 'add'],
+  emits: ['delete', 'add', 'import'],
+  
   methods: {
     handleDelete(row) {
       this.$emit('delete', row.id);
@@ -56,6 +92,12 @@ export default {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       })
       saveAs(blob, '产品列表.xlsx')
+    },
+    triggerFileInput() {
+      this.$refs.importer.triggerFileInput()
+    },
+    handleImport(importedProducts) {
+      this.$emit('import', importedProducts)
     }
   }
 }

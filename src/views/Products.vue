@@ -25,7 +25,8 @@
       <product-table 
         :products="products"
         @delete="deleteProduct" 
-        @add="isProductModalVisible = true"/>
+        @add="isProductModalVisible = true"
+        @import="handleImport"/>
 
       <add-product-dialog
         v-model:visible="isProductModalVisible"
@@ -36,7 +37,7 @@
 </template>
 
 <script>
-import ProductTable from '../components/Productstable.vue';
+import ProductTable from '../components/ProductsTable.vue';
 import AddProductDialog from '../components/AddProductDialog.vue';
 import api from '/src/utils/api';
 
@@ -101,7 +102,17 @@ export default {
         console.error('删除产品失败:', err);
       }
     }
-   }
+   },   
+   async handleImport(products) {
+      try {
+        await api.post('/import_product', products)
+        this.$message.success('导入成功')
+        this.fetchProducts()
+      } catch (err) {
+        this.$message.error('导入失败')
+      }
+    }
+
   }
 };
 </script>
