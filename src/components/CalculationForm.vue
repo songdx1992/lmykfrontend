@@ -3,8 +3,8 @@
     <el-form>
       <!-- 部门 -->
       <el-form-item label="部门">
-        <el-select v-model="form.department" placeholder="请选择部门">
-          <el-option v-for="d in departments" :key="d" :label="d" :value="d" />
+        <el-select v-model="form.department" filterable placeholder="请选择部门">
+          <el-option v-for="d in filteredDepartments" :key="d" :label="d" :value="d" />
         </el-select>
       </el-form-item>
 
@@ -17,7 +17,7 @@
 
       <!-- 产品多选 -->
       <el-form-item label="选择产品">
-        <el-select v-model="selectedProductIds" multiple placeholder="请选择产品">
+        <el-select v-model="selectedProductIds" multiple filterable placeholder="请选择产品">
           <el-option v-for="p in products" :key="p.id" :label="p.name" :value="p.id" />
         </el-select>
       </el-form-item>
@@ -105,6 +105,33 @@
         </el-col> -->
       </el-row>
     </el-card>
+          <!-- 寄样产品列表 -->
+      <div class="sample-section">
+        <div class="sample-header">
+          <span>寄样产品 </span>
+          <el-button type="primary" text @click="addSample(idx)">添加寄样</el-button>
+        </div>
+
+        <div v-for="(sample, sIdx) in item.samples" :key="sIdx" class="sample-item" style="display: flex; align-items: center; gap: 16px; margin-bottom: 12px;">
+          <el-form-item label="寄样产品" style="margin-bottom: 0;">
+            <el-select v-model="sample.productId"  @change="onSampleProductChange(idx, sIdx)" filterable placeholder="选择寄样产品" style="width: 200px;">
+              <el-option v-for="p in sampleProductOptions" :key="p.id" :label="p.name" :value="p.id" />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item label="数量"  style="margin-bottom: 0;" >
+            <el-input-number v-model="sample.quantity" :min="1" style="width: 100px;" />
+          </el-form-item>
+
+          <!-- <el-form-item label="寄样成本单价" style="margin-bottom: 0;" >
+            <el-col :span="4">
+              <span>{{ sample.cost_unit_price || 0 }} </span>
+            </el-col>
+          </el-form-item> -->
+
+          <el-button type="link" @click="removeSample(idx, sIdx)">删除</el-button>
+        </div>
+      </div>
   </el-col>
 </el-row>
 
@@ -122,6 +149,8 @@
 </template>
 
 <script>
+import { useUserStore } from '/src/stores/user';
+
 
 export default {
   name: 'CalculationForm',
@@ -137,10 +166,32 @@ export default {
     }
   },
   computed: {
+
+    userStore() {
+      return useUserStore();
+    },
     // 计算属性，判断是否为 storeProfit 模式
     isStoreProfitMode() {
       return this.mode === 'storeProfit';
+    },
+    sampleProductOptions() {
+    return this.products;
+  },
+    filteredDepartments() {
+       if (this.userStore.role === 'admin') {
+      // 管理员：显示所有
+      return this.departments;
+      } 
+      return this.departments.filter(d => d === this.userStore.department);
     }
+  },
+  mounted() {
+    // ✅ 页面加载时尝试恢复用户信息
+    this.userStore.restoreFromLocalStorage();
+    console.log('userStore.department:', this.userStore.department);
+    console.log('props.departments:', this.departments);
+    // ✅ 设置默认部门
+    this.form.department = this.userStore.department;
   },
   data() {
     return {
@@ -164,8 +215,9 @@ export default {
           quantity: 1,
           unit_price: 0,
           refund_rate: 0,
-          sample_fee_rate: 0.008, // 寄样费费率默认值
-          ad_spend_amount: 0
+          sample_fee_rate: 0, // 业务寄样费用
+          ad_spend_amount: 0,
+          sampleCost_fin: 0, // 财务寄样成本
           // slot_fee_rate: 0,
         };
 
@@ -200,14 +252,59 @@ export default {
         this.$message.warning('请至少选择一个产品并填写参数');
         return;
       }
+      // 计算寄样成本总额
+     const productsWithSampleCost = this.productInputs.map(product => {
+      let sampleCost = 0;
+      let sampleCost_fin = 0;
+      for (const sample of product.samples || []) {
+        const sampleProduct = this.products.find(p => p.id === sample.productId);
+        if (sampleProduct) {
+          sampleCost += (sampleProduct.cost_unit_price+sample.shipping_fee) * sample.quantity;
+          sampleCost_fin= (sampleProduct.cost_unit_price/(1 + sampleProduct.cost_tax_rate) + sampleProduct.shipping_fee/1.06) * sample.quantity ;
+        }
+      }
+      return {
+        ...product,
+        sample_fee_rate: sampleCost, // 👈 覆盖为寄样成本总额
+        sampleCost_fin: sampleCost_fin
+      };
+    });
 
-      // 发出计算事件，父组件 Dashboard.vue 会接收处理
+    // 发出计算事件，父组件 Dashboard.vue 会接收处理
       this.$emit('on-calculate', {
         form: this.form,
-        products: this.productInputs
+        products: productsWithSampleCost
       });
+    },
+
+    addSample(productIndex) {
+      const product = this.productInputs[productIndex];
+      if (!product.samples) {
+        product.samples = [];
+      }
+      product.samples.push({
+        productId: '',
+        name: '',
+        cost_unit_price: "", // 默认寄样产品成本单价
+        quantity: 1
+      });
+    },
+
+  removeSample(productIndex, sampleIndex) {
+    this.productInputs[productIndex].samples.splice(sampleIndex, 1);
+     },
+
+  onSampleProductChange(productIndex, sampleIndex) {
+      const sample = this.productInputs[productIndex].samples[sampleIndex];
+      const selected = this.products.find(p => p.id === sample.productId);
+      if (selected) {
+        sample.name = selected.name;
+        sample.cost_unit_price = selected.cost_unit_price;
+        sample.shipping_fee = selected.shipping_fee;
+        sample.cost_tax_rate = selected.cost_tax_rate;
+      }
     }
-  }
+   }
 };
 </script>
 

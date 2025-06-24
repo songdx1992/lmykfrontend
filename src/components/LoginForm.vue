@@ -43,19 +43,21 @@ export default {
         });
         // ✅ 登录成功，获取返回的用户名和角色
         console.log('登录返回数据', res.data);
-        const { username, role, token } = res.data;
+        const { username, role, token,department } = res.data;
 
         // ✅ 保存到 Pinia 中
         userStore.setToken(token);
-        userStore.setUser(username, role);
+        userStore.setUser(username, role, department);
         console.log('保存到 Pinia 中的用户信息:', userStore.username);
         console.log('保存到 Pinia 中的角色:', userStore.role);
         console.log('保存到 Pinia 中的token:', userStore.token);
+        console.log('保存到 Pinia 中的部门:', userStore.department);
 
         // ✅ 登录成功，保存登录信息到 localStorage
         localStorage.setItem('token', token);
         localStorage.setItem('username', username);
         localStorage.setItem('role', role);
+        localStorage.setItem('department', department);
 
         // ✅ 通知父组件登录成功
         this.$emit('on-login', { username: username, role: role ,token: token });

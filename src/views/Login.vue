@@ -14,7 +14,8 @@ export default {
       const userStore = useUserStore();
       userStore.restoreFromLocalStorage()
       // 保存用户信息到 Pinia
-      userStore.setUser(userInfo.username, userInfo.role);
+      console.log('登录后的userStore.department:', userInfo.department);
+      userStore.setUser(userInfo.username, userInfo.role, userInfo.department);
       userStore.setToken(userInfo.token);
       // 保存用户信息到 localStorage
       // localStorage.setItem("token", userInfo.token);    

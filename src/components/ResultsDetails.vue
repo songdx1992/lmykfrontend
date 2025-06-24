@@ -28,7 +28,7 @@
             </el-table>
       </div>
       <!-- 费用模块 -->
-      <div v-if="userRole==='admin'" class="mb-6">
+      <div class="mb-6">
         <h3 class="text-lg font-bold mb-2 text-primary">费用模块</h3>
         <el-table :data="getGroupData(item, GROUPS.EXPENSE)" border style="width: 100%">
           <el-table-column label="项目" prop="label" width="200" />
@@ -101,7 +101,7 @@ const metrics = [
   { key: 'other_pf_fee', label: '平台其他费用(1%)', group: GROUPS.EXPENSE },
   { key: 'influencer_fee', label: '达人佣金' },
   { key: 'ad_spend', label: '投流费用' , group: GROUPS.EXPENSE},
-  { key: 'kol_fee', label: 'KOL费用分摊' , group: GROUPS.EXPENSE},
+  // { key: 'kol_fee', label: 'KOL费用分摊' , group: GROUPS.EXPENSE},
   { key: 'slot_fee', label: '达人坑位费' , group: GROUPS.EXPENSE},
   // { key: 'salary', label: '工资及福利' , group: GROUPS.EXPENSE},
   // { key: 'travel', label: '差旅费' , group: GROUPS.EXPENSE},
@@ -112,10 +112,11 @@ const metrics = [
   // 利润模块
   { key: 'roi', label: 'ROI' , group: GROUPS.PROFIT},
   // { key: 'sales_profit', label: '销售利润(扣除固定成本)', group: GROUPS.PROFIT },
-  { key: 'marketing_profit', label: '营销利润(不扣除固定成本)', group: GROUPS.PROFIT },
+  { key: 'marketing_profit', label: '渠道毛利', group: GROUPS.PROFIT },
   { key: 'marketing_margin', label: '营销利润率', group: GROUPS.PROFIT },
   { key: 'break_even_revenue', label: '保本销售额', group: GROUPS.PROFIT },
-  { key: 'break_even_quantity', label: '保本销售数量', group: GROUPS.PROFIT }
+  { key: 'break_even_quantity', label: '保本销售数量', group: GROUPS.PROFIT },
+  { key: 'break_even_roi', label: '保本ROI', group: GROUPS.PROFIT }
 ];
 //  2025-06-18 注释 工资福利 ，差旅费，租金等其他费用，客服部分摊，市场部分摊，销售利润扣除固定成本
 

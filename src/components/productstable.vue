@@ -22,6 +22,14 @@
           <li>税率</li>
         </ul>
         除“名称”外，其余列必须为数字格式，否则导入将失败。
+          <el-button
+            type="info"
+            size="small"
+            @click="exportImportTemplate"
+            style="margin-top: 8px;"
+          >
+            导出导入模板
+          </el-button>
       </div>
     </el-popover>
   </div>
@@ -98,6 +106,27 @@ export default {
     },
     handleImport(importedProducts) {
       this.$emit('import', importedProducts)
+    },
+    exportImportTemplate() {
+      const headers = [{
+      名称: '',
+      成本单价: '',
+      运费: '',
+      税率: ''
+    }]
+    const worksheet = XLSX.utils.json_to_sheet(headers)
+    const workbook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(workbook, worksheet, '导入模板')
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array'
+    })
+
+    const blob = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    })
+    saveAs(blob, '导入模板.xlsx')
     }
   }
 }

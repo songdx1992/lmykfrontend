@@ -76,7 +76,7 @@ const metrics = [
   { key: 'other_pf_fee', label: '平台其他费用（1%）', group: GROUPS.EXPENSE },
   { key: 'influencer_fee', label: '达人佣金', group: GROUPS.EXPENSE },
   { key: 'ad_spend', label: '投流费用', group: GROUPS.EXPENSE },
-  { key: 'kol_fee', label: 'KOL费用分摊', group: GROUPS.EXPENSE },
+  // { key: 'kol_fee', label: 'KOL费用分摊', group: GROUPS.EXPENSE },
   { key: 'slot_fee', label: '达人坑位费', group: GROUPS.EXPENSE },
   // { key: 'salary', label: '工资及福利', group: GROUPS.EXPENSE },
   // { key: 'travel', label: '差旅费', group: GROUPS.EXPENSE },
@@ -87,10 +87,11 @@ const metrics = [
   // 利润模块（PROFIT）
   { key: 'roi', label: 'ROI（投入产出比）', group: GROUPS.PROFIT },
   // { key: 'sales_profit', label: '销售利润（扣除固定成本）', group: GROUPS.PROFIT },
-  { key: 'marketing_profit', label: '营销利润（不扣除固定成本）', group: GROUPS.PROFIT },
+  { key: 'marketing_profit', label: '渠道毛利', group: GROUPS.PROFIT },
   { key: 'marketing_margin', label: '营销利润率', group: GROUPS.PROFIT },
   { key: 'break_even_revenue', label: '保本销售额', group: GROUPS.PROFIT },
-  { key: 'break_even_quantity', label: '保本销售数量', group: GROUPS.PROFIT }
+  { key: 'break_even_quantity', label: '保本销售数量', group: GROUPS.PROFIT },
+  { key: 'break_even_roi', label: '保本ROI', group: GROUPS.PROFIT }
 ];
 
 //  2025-06-18 注释 工资福利 ，差旅费，租金等其他费用，客服部分摊，市场部分摊，销售利润扣除固定成本
@@ -119,8 +120,8 @@ const groupedMetrics = computed(() => {
       console.warn(`跳过未知分组的指标: ${metric.key} (group: ${groupKey})`);
       return;
     }
-    // 如果角色不是 admin，跳过 expense 组
-    if (groupKey === 'expense' && props.role !== 'admin') {
+    // 如果角色不是 admin，跳过 expense 组，改成 跳过无效分组
+    if (!groupKey || !(groupKey in GROUP_LABELS)) {
       console.log(`非管理员角色，跳过费用模块指标: ${metric.key}`);
       return;
     }
