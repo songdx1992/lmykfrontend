@@ -31,6 +31,10 @@
             <el-tab-pane label="产品明细" name="details">
               <results-details v-if="details" :items="details" />
             </el-tab-pane>
+
+            <el-tab-pane label="AI分析" name="analysis">
+              <analysis-panel v-if="summary" :summary="summary" />
+          </el-tab-pane>
           </el-tabs>
         </el-col>
       </el-row>
@@ -45,6 +49,7 @@ import ResultsSummary from '../components/ResultsSummary.vue';
 import ResultsDetails from '../components/ResultsDetails.vue';
 import AddProductDialog from '../components/AddProductDialog.vue';
 import api from '/src/utils/api';
+import AnalysisPanel from '../components/AnalysisPanel.vue';
 import { useUserStore } from '/src/stores/user';
 
 export default {
@@ -54,7 +59,8 @@ export default {
     CalculationForm,
     ResultsSummary,
     ResultsDetails,
-    AddProductDialog
+    AddProductDialog,
+    AnalysisPanel
   },
   data() {
     return {

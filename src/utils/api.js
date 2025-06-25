@@ -5,7 +5,7 @@ import { storeToRefs } from 'pinia';
 
 const api = axios.create({
   baseURL: "/api",  // 后端地址
-  timeout: 5000
+  timeout: 200000
 });
 
 // 请求拦截器：每次请求自动带上 token
